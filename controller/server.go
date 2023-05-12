@@ -1,13 +1,19 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/ambroseqiu/senao_hw/model"
+	"github.com/gin-gonic/gin"
+)
 
 type apiController struct {
-	route *gin.Engine
+	usecase model.UsecaseHandler
+	route   *gin.Engine
 }
 
-func NewController() apiController {
-	return apiController{}
+func NewController(usecase model.UsecaseHandler) apiController {
+	return apiController{
+		usecase: usecase,
+	}
 }
 
 func (ctrl *apiController) SetRoute() {
