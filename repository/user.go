@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	GetApi(ctx context.Context) error
+	CreateUser(ctx context.Context, user *User) error
 }
 
 type userRepository struct {
@@ -20,6 +20,9 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) GetApi(ctx context.Context) error {
+func (r *userRepository) CreateUser(ctx context.Context, user *User) error {
+	if err := r.db.Create(&user).Error; err != nil {
+		return err
+	}
 	return nil
 }

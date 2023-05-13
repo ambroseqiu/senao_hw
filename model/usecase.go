@@ -4,10 +4,11 @@ import (
 	"context"
 
 	"github.com/ambroseqiu/senao_hw/repository"
+	"github.com/google/uuid"
 )
 
 type UsecaseHandler interface {
-	GetApi(ctx context.Context) error
+	CreateUser(ctx context.Context, req CreateUserRequest) (*CreateUserResponse, error)
 }
 
 type usecaseHandler struct {
@@ -20,6 +21,20 @@ func NewUsecaseHandler(repo repository.UserRepository) UsecaseHandler {
 	}
 }
 
-func (u *usecaseHandler) GetApi(ctx context.Context) error {
-	return u.repo.GetApi(ctx)
+func (u *usecaseHandler) CreateUser(ctx context.Context, req CreateUserRequest) (*CreateUserResponse, error) {
+	uuid := uuid.New()
+	user := &repository.User{
+		ID:             uuid,
+		Username:       req.Username,
+		HashedPassword: "",
+	}
+	if err := u.repo.CreateUser(ctx, user); err != nil {
+		return nil, err
+	}
+	rsp := &CreateUserResponse{
+		Success: true,
+		Reason:  "",
+	}
+
+	return rsp, nil
 }
