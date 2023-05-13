@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ambroseqiu/senao_hw/controller"
+	"github.com/ambroseqiu/senao_hw/migrations"
 	"github.com/ambroseqiu/senao_hw/model"
 	"github.com/ambroseqiu/senao_hw/repository"
 	"github.com/joho/godotenv"
@@ -21,6 +22,8 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err)
 	}
+
+	migrations.RunMigration(gormDB)
 
 	repo := repository.NewUserRepository(gormDB)
 	usecase := model.NewUsecaseHandler(repo)
