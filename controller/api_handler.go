@@ -9,7 +9,7 @@ import (
 )
 
 func errResponse(err error) *gin.H {
-	return &gin.H{"err": err}
+	return &gin.H{"err": err.Error()}
 }
 
 func (ctrl *apiController) CreateUser(ctx *gin.Context) {
@@ -18,9 +18,14 @@ func (ctrl *apiController) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errResponse(err))
 		return
 	}
+
 	rsp, err := ctrl.usecase.CreateUser(context.Background(), req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		if err == model.ErrCreateUserRequestValidationFailed {
+			ctx.JSON(http.StatusBadRequest, rsp)
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, rsp)
 		return
 	}
 

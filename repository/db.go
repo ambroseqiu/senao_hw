@@ -18,7 +18,8 @@ func NewGormDB() (*gorm.DB, error) {
 	dbName := os.Getenv("DB_NAME")
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", host, port, user, password, dbName)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger:         logger.Default.LogMode(logger.Info),
+		TranslateError: true,
 	})
 	if err != nil {
 		log.Fatal().Err(err).Msg("can't not access db with gorm")
