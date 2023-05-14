@@ -16,9 +16,7 @@ func NewController(usecase model.UsecaseHandler) apiController {
 	}
 }
 
-func (ctrl *apiController) SetRoute() {
-	route := gin.Default()
-
+func (ctrl *apiController) SetRoute(route *gin.Engine) {
 	apiRoute := route.Group("/api")
 	apiRoute.POST("/account", ctrl.CreateAccount)
 	apiRoute.GET("/login", ctrl.LoginAccount)

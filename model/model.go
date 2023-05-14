@@ -24,13 +24,13 @@ var (
 )
 
 type AccountRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type AccountResponse struct {
-	Success bool   `json:"success"`
-	Reason  string `json:"reason"`
+	Success bool   `json:"success" binding:"required"`
+	Reason  string `json:"reason" binding:"required"`
 }
 
 func (req *AccountRequest) Validate() error {

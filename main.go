@@ -8,6 +8,7 @@ import (
 	"github.com/ambroseqiu/senao_hw/migrations"
 	"github.com/ambroseqiu/senao_hw/model"
 	"github.com/ambroseqiu/senao_hw/repository"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 )
@@ -28,7 +29,8 @@ func main() {
 	repo := repository.NewAccountRepository(gormDB)
 	usecase := model.NewUsecaseHandler(repo)
 	controller := controller.NewController(usecase)
-	controller.SetRoute()
+	route := gin.Default()
+	controller.SetRoute(route)
 	httpHost := fmt.Sprintf("%s:%s", os.Getenv("DB_HOST"), os.Getenv("HTTP_PORT"))
 	controller.Start(httpHost)
 }
