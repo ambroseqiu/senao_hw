@@ -39,10 +39,14 @@ func (u *usecaseHandler) CreateUser(ctx context.Context, req CreateUserRequest) 
 	}
 
 	uuid := uuid.New()
+	hashedPassword, err := HashedPassword(req.Password)
+	if err != nil {
+		return nil, err
+	}
 	user := &repository.User{
 		ID:             uuid,
 		Username:       req.Username,
-		HashedPassword: "",
+		HashedPassword: hashedPassword,
 	}
 
 	if err := u.repo.CreateUser(ctx, user); err != nil {

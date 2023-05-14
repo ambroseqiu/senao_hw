@@ -25,7 +25,7 @@ func (ctrl *apiController) CreateUser(ctx *gin.Context) {
 			ctx.JSON(http.StatusBadRequest, rsp)
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, rsp)
+		ctx.JSON(http.StatusInternalServerError, errResponse(err))
 		return
 	}
 
