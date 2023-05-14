@@ -3,6 +3,7 @@ module github.com/ambroseqiu/senao_hw
 go 1.19
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-gormigrate/gormigrate/v2 v2.0.2
 	github.com/golang/mock v1.6.0
