@@ -13,7 +13,7 @@ func errResponse(err error) *gin.H {
 }
 
 func (ctrl *apiController) CreateUser(ctx *gin.Context) {
-	var req model.CreateUserRequest
+	var req model.AccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errResponse(err))
 		return
@@ -30,4 +30,8 @@ func (ctrl *apiController) CreateUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, rsp)
+}
+
+func (ctrl *apiController) LoginUser(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, nil)
 }

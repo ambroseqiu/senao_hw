@@ -14,7 +14,7 @@ var (
 )
 
 type UsecaseHandler interface {
-	CreateUser(ctx context.Context, req CreateUserRequest) (*CreateUserResponse, error)
+	CreateUser(ctx context.Context, req AccountRequest) (*AccountResponse, error)
 }
 
 type usecaseHandler struct {
@@ -27,8 +27,8 @@ func NewUsecaseHandler(repo repository.UserRepository) UsecaseHandler {
 	}
 }
 
-func (u *usecaseHandler) CreateUser(ctx context.Context, req CreateUserRequest) (*CreateUserResponse, error) {
-	rsp := &CreateUserResponse{
+func (u *usecaseHandler) CreateUser(ctx context.Context, req AccountRequest) (*AccountResponse, error) {
+	rsp := &AccountResponse{
 		Success: true,
 		Reason:  "",
 	}

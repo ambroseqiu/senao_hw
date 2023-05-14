@@ -5,16 +5,6 @@ import (
 	"regexp"
 )
 
-type CreateUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type CreateUserResponse struct {
-	Success bool   `json:"success"`
-	Reason  string `json:"reason"`
-}
-
 const (
 	maxUsernameLength = 32
 	minUsernameLength = 3
@@ -33,7 +23,17 @@ var (
 	ErrPasswordValidationFailed = errors.New("Invalid password format. It should contain at least 1 uppercase letter, 1 lowercase letter, and 1 number")
 )
 
-func (req *CreateUserRequest) Validate() error {
+type AccountRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type AccountResponse struct {
+	Success bool   `json:"success"`
+	Reason  string `json:"reason"`
+}
+
+func (req *AccountRequest) Validate() error {
 	if !isValidateFormat(req.Username) {
 		return ErrInvalidUsernameFormat
 	}
