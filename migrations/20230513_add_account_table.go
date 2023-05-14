@@ -6,21 +6,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
+type Account struct {
 	ID             uuid.UUID `gorm:"type:uuid;primaryKey"`
 	Username       string    `gorm:"uniqueIndex"`
 	HashedPassword string
 	gorm.Model
 }
 
-func CreateUserTable() *gormigrate.Migration {
+func CreateAccountTable() *gormigrate.Migration {
 	return &gormigrate.Migration{
 		ID: "202305130001",
 		Migrate: func(tx *gorm.DB) error {
-			return tx.AutoMigrate(User{})
+			return tx.AutoMigrate(Account{})
 		},
 		Rollback: func(tx *gorm.DB) error {
-			return tx.Migrator().DropTable(User{})
+			return tx.Migrator().DropTable(Account{})
 		},
 	}
 }

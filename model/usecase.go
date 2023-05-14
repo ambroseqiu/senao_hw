@@ -10,24 +10,24 @@ import (
 )
 
 var (
-	ErrCreateUserRequestValidationFailed = errors.New("create user request validation failed")
+	ErrCreateAccountRequestValidationFailed = errors.New("create user request validation failed")
 )
 
 type UsecaseHandler interface {
-	CreateUser(ctx context.Context, req AccountRequest) (*AccountResponse, error)
+	CreateAccount(ctx context.Context, req AccountRequest) (*AccountResponse, error)
 }
 
 type usecaseHandler struct {
-	repo repository.UserRepository
+	repo repository.AccountRepository
 }
 
-func NewUsecaseHandler(repo repository.UserRepository) UsecaseHandler {
+func NewUsecaseHandler(repo repository.AccountRepository) UsecaseHandler {
 	return &usecaseHandler{
 		repo: repo,
 	}
 }
 
-func (u *usecaseHandler) CreateUser(ctx context.Context, req AccountRequest) (*AccountResponse, error) {
+func (u *usecaseHandler) CreateAccount(ctx context.Context, req AccountRequest) (*AccountResponse, error) {
 	rsp := &AccountResponse{
 		Success: true,
 		Reason:  "",
@@ -36,7 +36,7 @@ func (u *usecaseHandler) CreateUser(ctx context.Context, req AccountRequest) (*A
 	if err := req.Validate(); err != nil {
 		rsp.Success = false
 		rsp.Reason = err.Error()
-		return rsp, ErrCreateUserRequestValidationFailed
+		return rsp, ErrCreateAccountRequestValidationFailed
 	}
 
 	uuid := uuid.New()
@@ -44,13 +44,13 @@ func (u *usecaseHandler) CreateUser(ctx context.Context, req AccountRequest) (*A
 	if err != nil {
 		return nil, err
 	}
-	user := &repository.User{
+	account := &repository.Account{
 		ID:             uuid,
 		Username:       req.Username,
 		HashedPassword: hashedPassword,
 	}
 
-	if err := u.repo.CreateUser(ctx, user); err != nil {
+	if err := u.repo.CreateAccount(ctx, account); err != nil {
 		rsp.Success = false
 		rsp.Reason = err.Error()
 		return rsp, err
@@ -58,3 +58,5 @@ func (u *usecaseHandler) CreateUser(ctx context.Context, req AccountRequest) (*A
 
 	return rsp, nil
 }
+
+// func (u *usecaseHandler) LoginUser(req AccountRequest){}

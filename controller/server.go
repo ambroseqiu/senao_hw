@@ -20,8 +20,8 @@ func (ctrl *apiController) SetRoute() {
 	route := gin.Default()
 
 	apiRoute := route.Group("/api")
-	apiRoute.POST("/account", ctrl.CreateUser)
-	apiRoute.GET("/login", ctrl.LoginUser)
+	apiRoute.POST("/account", ctrl.CreateAccount)
+	apiRoute.GET("/login", ctrl.LoginAccount)
 
 	ctrl.route = route
 }

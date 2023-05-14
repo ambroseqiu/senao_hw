@@ -9,50 +9,50 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func getRandomUser(t *testing.T) *User {
+func getRandomAccount(t *testing.T) *Account {
 	userName := util.RandomString(6)
 	password := util.RandomPassword(8)
 	hashedPassword, err := util.HashedPassword(password)
 	require.NoError(t, err)
-	return &User{
+	return &Account{
 		Username:       userName,
 		HashedPassword: hashedPassword,
 	}
 }
 
-func TestCreateUser(t *testing.T) {
+func TestCreateAccount(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := NewMockUserRepository(ctrl)
+	mockRepo := NewMockAccountRepository(ctrl)
 
-	user := getRandomUser(t)
+	account := getRandomAccount(t)
 
-	mockRepo.EXPECT().CreateUser(gomock.Any(), user).Return(nil)
+	mockRepo.EXPECT().CreateAccount(gomock.Any(), account).Return(nil)
 
-	err := mockRepo.CreateUser(context.Background(), user)
+	err := mockRepo.CreateAccount(context.Background(), account)
 	require.NoError(t, err)
 }
 
-func TestCreateUserAlreadyExisted(t *testing.T) {
+func TestCreateAccountAlreadyExisted(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := NewMockUserRepository(ctrl)
+	mockRepo := NewMockAccountRepository(ctrl)
 
-	user := getRandomUser(t)
+	account := getRandomAccount(t)
 
 	mockRepo.EXPECT().
-		CreateUser(gomock.Any(), user).
+		CreateAccount(gomock.Any(), account).
 		Return(nil)
 
-	err := mockRepo.CreateUser(context.Background(), user)
+	err := mockRepo.CreateAccount(context.Background(), account)
 	require.NoError(t, err)
 
 	mockRepo.EXPECT().
-		CreateUser(gomock.Any(), user).
-		Return(ErrUserIsAlreadyExisted)
+		CreateAccount(gomock.Any(), account).
+		Return(ErrAccountIsAlreadyExisted)
 
-	err = mockRepo.CreateUser(context.Background(), user)
-	require.EqualError(t, err, ErrUserIsAlreadyExisted.Error())
+	err = mockRepo.CreateAccount(context.Background(), account)
+	require.EqualError(t, err, ErrAccountIsAlreadyExisted.Error())
 }

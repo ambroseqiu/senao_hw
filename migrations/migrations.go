@@ -8,7 +8,7 @@ import (
 
 func RunMigration(gormDB *gorm.DB) {
 	m := gormigrate.New(gormDB, gormigrate.DefaultOptions, []*gormigrate.Migration{
-		CreateUserTable(),
+		CreateAccountTable(),
 	})
 	if err := m.Migrate(); err != nil {
 		log.Fatal().Err(err).Msgf("migration failed: %v", err.Error())

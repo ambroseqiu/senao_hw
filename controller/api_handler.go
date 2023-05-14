@@ -12,16 +12,16 @@ func errResponse(err error) *gin.H {
 	return &gin.H{"err": err.Error()}
 }
 
-func (ctrl *apiController) CreateUser(ctx *gin.Context) {
+func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 	var req model.AccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errResponse(err))
 		return
 	}
 
-	rsp, err := ctrl.usecase.CreateUser(context.Background(), req)
+	rsp, err := ctrl.usecase.CreateAccount(context.Background(), req)
 	if err != nil {
-		if err == model.ErrCreateUserRequestValidationFailed {
+		if err == model.ErrCreateAccountRequestValidationFailed {
 			ctx.JSON(http.StatusBadRequest, rsp)
 			return
 		}
@@ -32,6 +32,6 @@ func (ctrl *apiController) CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
-func (ctrl *apiController) LoginUser(ctx *gin.Context) {
+func (ctrl *apiController) LoginAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }

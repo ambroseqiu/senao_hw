@@ -25,7 +25,7 @@ func main() {
 
 	migrations.RunMigration(gormDB)
 
-	repo := repository.NewUserRepository(gormDB)
+	repo := repository.NewAccountRepository(gormDB)
 	usecase := model.NewUsecaseHandler(repo)
 	controller := controller.NewController(usecase)
 	controller.SetRoute()
