@@ -10,11 +10,14 @@ import (
 )
 
 var (
-	ErrCreateAccountRequestValidationFailed = errors.New("create user request validation failed")
+	ErrAccountRequestValidationFailed = errors.New("Create user request validation failed")
+	ErrLoginAccountNotFound           = errors.New("Login account not found")
+	ErrLoginAccountNotAllowed         = errors.New("Login access not allowed")
 )
 
 type UsecaseHandler interface {
 	CreateAccount(ctx context.Context, req AccountRequest) (*AccountResponse, error)
+	LoginAccount(ctx context.Context, req AccountRequest) (*AccountResponse, error)
 }
 
 type usecaseHandler struct {
@@ -36,7 +39,7 @@ func (u *usecaseHandler) CreateAccount(ctx context.Context, req AccountRequest) 
 	if err := req.Validate(); err != nil {
 		rsp.Success = false
 		rsp.Reason = err.Error()
-		return rsp, ErrCreateAccountRequestValidationFailed
+		return rsp, ErrAccountRequestValidationFailed
 	}
 
 	uuid := uuid.New()
@@ -59,4 +62,34 @@ func (u *usecaseHandler) CreateAccount(ctx context.Context, req AccountRequest) 
 	return rsp, nil
 }
 
-// func (u *usecaseHandler) LoginUser(req AccountRequest){}
+func (u *usecaseHandler) LoginAccount(ctx context.Context, req AccountRequest) (*AccountResponse, error) {
+	rsp := &AccountResponse{
+		Success: true,
+		Reason:  "",
+	}
+
+	if err := req.Validate(); err != nil {
+		rsp.Success = false
+		rsp.Reason = err.Error()
+		return rsp, ErrAccountRequestValidationFailed
+	}
+
+	account, err := u.repo.GetAccount(ctx, req.Username)
+	if err != nil {
+		rsp.Success = false
+		if err == repository.ErrAccountRecordNotFound {
+			rsp.Reason = err.Error()
+			return rsp, ErrLoginAccountNotFound
+		}
+		return nil, err
+	}
+	if err = util.CheckPassword(req.Password, account.HashedPassword); err != nil {
+		rsp.Success = false
+		if err == util.ErrMismatchedPassword {
+			rsp.Reason = err.Error()
+			return rsp, ErrLoginAccountNotAllowed
+		}
+		return nil, err
+	}
+	return rsp, nil
+}
