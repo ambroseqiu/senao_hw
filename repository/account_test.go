@@ -84,7 +84,7 @@ func TestCreateAccountDuplicate(t *testing.T) {
 	mock.ExpectRollback()
 
 	err := repo.CreateAccount(context.Background(), account)
-	require.EqualError(t, err, ErrAccountIsAlreadyExisted.Error())
+	require.EqualError(t, err, ErrAccountIsDuplicated.Error())
 }
 
 func TestGetAccount(t *testing.T) {

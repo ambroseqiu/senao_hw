@@ -11,6 +11,7 @@ import (
 
 var (
 	ErrAccountRequestValidationFailed = errors.New("Create user request validation failed")
+	ErrAccountIsAlreadyExisted        = errors.New("Account is already existed")
 	ErrLoginAccountNotFound           = errors.New("Login account not found")
 	ErrLoginAccountNotAllowed         = errors.New("Login access not allowed")
 )
@@ -55,8 +56,11 @@ func (u *usecaseHandler) CreateAccount(ctx context.Context, req AccountRequest) 
 
 	if err := u.repo.CreateAccount(ctx, account); err != nil {
 		rsp.Success = false
-		rsp.Reason = err.Error()
-		return rsp, err
+		if errors.Is(err, repository.ErrAccountIsDuplicated) {
+			rsp.Reason = ErrAccountIsAlreadyExisted.Error()
+			return rsp, ErrAccountIsAlreadyExisted
+		}
+		return nil, err
 	}
 
 	return rsp, nil
@@ -78,7 +82,7 @@ func (u *usecaseHandler) LoginAccount(ctx context.Context, req AccountRequest) (
 	if err != nil {
 		rsp.Success = false
 		if err == repository.ErrAccountRecordNotFound {
-			rsp.Reason = err.Error()
+			rsp.Reason = ErrLoginAccountNotFound.Error()
 			return rsp, ErrLoginAccountNotFound
 		}
 		return nil, err
@@ -86,7 +90,7 @@ func (u *usecaseHandler) LoginAccount(ctx context.Context, req AccountRequest) (
 	if err = util.CheckPassword(req.Password, account.HashedPassword); err != nil {
 		rsp.Success = false
 		if err == util.ErrMismatchedPassword {
-			rsp.Reason = err.Error()
+			rsp.Reason = ErrLoginAccountNotAllowed.Error()
 			return rsp, ErrLoginAccountNotAllowed
 		}
 		return nil, err

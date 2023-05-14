@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	ErrAccountIsAlreadyExisted = errors.New("Account already exists")
-	ErrAccountRecordNotFound   = errors.New("Account is not found")
+	ErrAccountIsDuplicated   = errors.New("Account is duplicated")
+	ErrAccountRecordNotFound = errors.New("Account is not found")
 )
 
 type AccountRepository interface {
@@ -31,7 +31,7 @@ func NewAccountRepository(db *gorm.DB) AccountRepository {
 func (r *accountRepository) CreateAccount(ctx context.Context, account *Account) error {
 	if err := r.db.Create(&account).Error; err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return ErrAccountIsAlreadyExisted
+			return ErrAccountIsDuplicated
 		}
 		return err
 	}
