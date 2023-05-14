@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/ambroseqiu/senao_hw/repository"
+	"github.com/ambroseqiu/senao_hw/util"
 	"github.com/google/uuid"
 )
 
@@ -39,7 +40,7 @@ func (u *usecaseHandler) CreateUser(ctx context.Context, req CreateUserRequest) 
 	}
 
 	uuid := uuid.New()
-	hashedPassword, err := HashedPassword(req.Password)
+	hashedPassword, err := util.HashedPassword(req.Password)
 	if err != nil {
 		return nil, err
 	}
