@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/ambroseqiu/senao_hw/controller"
+	"github.com/ambroseqiu/senao_hw/docs"
 	"github.com/ambroseqiu/senao_hw/migrations"
 	"github.com/ambroseqiu/senao_hw/model"
 	"github.com/ambroseqiu/senao_hw/repository"
@@ -13,7 +14,21 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// @termsOfService  http://swagger.io/terms/
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+
+	docs.SwaggerInfo.Title = "Swagger Example API"
+	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "0.0.0.0:8080"
+	docs.SwaggerInfo.BasePath = "/api"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error loading .env file")

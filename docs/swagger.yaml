@@ -1,0 +1,79 @@
+definitions:
+  model.AccountRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.AccountResponse:
+    properties:
+      reason:
+        type: string
+      success:
+        type: boolean
+    required:
+    - reason
+    - success
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  termsOfService: http://swagger.io/terms/
+paths:
+  /accounts:
+    post:
+      description: Create account by username and password
+      parameters:
+      - description: Account Request Struct
+        in: body
+        name: accountRequest
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.AccountResponse'
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create an account
+      tags:
+      - accounts
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login account and verify username and password
+      parameters:
+      - description: Account Request Struct
+        in: body
+        name: accountRequest
+        required: true
+        schema:
+          $ref: '#/definitions/model.AccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.AccountResponse'
+      summary: Login account
+      tags:
+      - accounts
+swagger: "2.0"

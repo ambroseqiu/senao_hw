@@ -12,6 +12,15 @@ func errResponse(err error) *gin.H {
 	return &gin.H{"err": err.Error()}
 }
 
+// CreateAccount godoc
+// @Summary      Create an account
+// @Description  Create account by username and password
+// @Tags         accounts
+// @Param        accountRequest body model.AccountRequest true "Account Request Struct"
+// @Success      200  {object}  model.AccountResponse
+// @Failure      400  {object}  model.AccountResponse
+// @Failure      500  {object}  error
+// @Router       /accounts [post]
 func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 	var req model.AccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -32,6 +41,15 @@ func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, rsp)
 }
 
+// LoginAccount godoc
+// @Summary      Login account
+// @Description  login account and verify username and password
+// @Tags         accounts
+// @Param        accountRequest body model.AccountRequest true "Account Request Struct"
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  model.AccountResponse
+// @Router       /login [post]
 func (ctrl *apiController) LoginAccount(ctx *gin.Context) {
 	var req model.AccountRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
