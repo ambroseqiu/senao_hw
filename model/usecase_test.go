@@ -176,9 +176,9 @@ func TestLoginAccount(t *testing.T) {
 					}, nil)
 			},
 			verify: func(rsp *AccountResponse, err error) {
-				require.EqualError(t, err, ErrLoginAccountNotAllowed.Error())
+				require.EqualError(t, err, ErrLoginWrongPassword.Error())
 				require.False(t, rsp.Success)
-				require.Equal(t, ErrLoginAccountNotAllowed.Error(), rsp.Reason)
+				require.Equal(t, ErrLoginWrongPassword.Error(), rsp.Reason)
 			},
 		},
 	}
@@ -198,4 +198,40 @@ func TestLoginAccount(t *testing.T) {
 			tc.verify(rsp, err)
 		})
 	}
+}
+
+func TestLoginFailedAttemptFiveTime(t *testing.T) {
+	username := util.RandomString(10)
+	password := util.RandomPassword(10)
+	wrongPassword := util.RandomPassword(10)
+	hashedPassword, err := util.HashedPassword(password)
+	require.NoError(t, err)
+
+	ctrl := gomock.NewController(t)
+
+	mockRepo := repository.NewMockAccountRepository(ctrl)
+
+	usecase := NewUsecaseHandler(mockRepo)
+
+	mockRepo.EXPECT().GetAccount(gomock.Any(), username).Times(5).Return(&repository.Account{
+		Username:       username,
+		HashedPassword: hashedPassword,
+	}, nil)
+
+	req := AccountRequest{
+		Username: username,
+		Password: wrongPassword,
+	}
+
+	for i := 1; i <= 5; i++ {
+		rsp, err := usecase.LoginAccount(context.Background(), req)
+		require.EqualError(t, err, ErrLoginWrongPassword.Error())
+		require.False(t, rsp.Success)
+		require.Equal(t, ErrLoginWrongPassword.Error(), rsp.Reason)
+	}
+
+	rsp, err := usecase.LoginAccount(context.Background(), req)
+	require.EqualError(t, err, ErrLoginAttemptBlocked.Error())
+	require.False(t, rsp.Success)
+	require.Equal(t, ErrLoginAttemptBlocked.Error(), rsp.Reason)
 }

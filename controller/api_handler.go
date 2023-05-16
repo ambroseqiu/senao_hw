@@ -61,8 +61,10 @@ func (ctrl *apiController) LoginAccount(ctx *gin.Context) {
 	if err != nil {
 		if err == model.ErrAccountRequestValidationFailed || err == model.ErrLoginAccountNotFound {
 			ctx.JSON(http.StatusBadRequest, rsp)
-		} else if err == model.ErrLoginAccountNotAllowed {
+		} else if err == model.ErrLoginWrongPassword {
 			ctx.JSON(http.StatusUnauthorized, rsp)
+		} else if err == model.ErrLoginAttemptBlocked {
+			ctx.JSON(http.StatusTooManyRequests, rsp)
 		} else {
 			ctx.JSON(http.StatusInternalServerError, err)
 		}

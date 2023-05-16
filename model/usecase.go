@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"errors"
+	"sync"
+	"time"
 
 	"github.com/ambroseqiu/senao_hw/repository"
 	"github.com/ambroseqiu/senao_hw/util"
@@ -10,10 +12,16 @@ import (
 )
 
 var (
+	maxFailedAttempt      = 5
+	timeBlockLoginAttempt = time.Minute
+)
+
+var (
 	ErrAccountRequestValidationFailed = errors.New("Create user request validation failed")
 	ErrAccountIsAlreadyExisted        = errors.New("Account is already existed")
 	ErrLoginAccountNotFound           = errors.New("Login account not found")
-	ErrLoginAccountNotAllowed         = errors.New("Login access not allowed")
+	ErrLoginWrongPassword             = errors.New("Wrong password")
+	ErrLoginAttemptBlocked            = errors.New("too many failed login attempt, please try it later")
 )
 
 type UsecaseHandler interface {
@@ -22,12 +30,15 @@ type UsecaseHandler interface {
 }
 
 type usecaseHandler struct {
-	repo repository.AccountRepository
+	mu      sync.RWMutex
+	loginAC map[string]LoginAttempt
+	repo    repository.AccountRepository
 }
 
 func NewUsecaseHandler(repo repository.AccountRepository) UsecaseHandler {
 	return &usecaseHandler{
-		repo: repo,
+		loginAC: make(map[string]LoginAttempt, 100),
+		repo:    repo,
 	}
 }
 
@@ -68,19 +79,15 @@ func (u *usecaseHandler) CreateAccount(ctx context.Context, req AccountRequest) 
 
 func (u *usecaseHandler) LoginAccount(ctx context.Context, req AccountRequest) (*AccountResponse, error) {
 	rsp := &AccountResponse{
-		Success: true,
+		Success: false,
 		Reason:  "",
 	}
-
-	if err := req.Validate(); err != nil {
-		rsp.Success = false
+	if err := u.loginValidate(req.Username); err != nil {
 		rsp.Reason = err.Error()
-		return rsp, ErrAccountRequestValidationFailed
+		return rsp, err
 	}
-
 	account, err := u.repo.GetAccount(ctx, req.Username)
 	if err != nil {
-		rsp.Success = false
 		if err == repository.ErrAccountRecordNotFound {
 			rsp.Reason = ErrLoginAccountNotFound.Error()
 			return rsp, ErrLoginAccountNotFound
@@ -88,12 +95,48 @@ func (u *usecaseHandler) LoginAccount(ctx context.Context, req AccountRequest) (
 		return nil, err
 	}
 	if err = util.CheckPassword(req.Password, account.HashedPassword); err != nil {
-		rsp.Success = false
 		if err == util.ErrMismatchedPassword {
-			rsp.Reason = ErrLoginAccountNotAllowed.Error()
-			return rsp, ErrLoginAccountNotAllowed
+			u.AddFailedAttempt(account.Username)
+			rsp.Reason = ErrLoginWrongPassword.Error()
+			return rsp, ErrLoginWrongPassword
 		}
 		return nil, err
 	}
+	rsp.Success = true
 	return rsp, nil
+}
+
+func (u *usecaseHandler) loginValidate(username string) error {
+	defer u.mu.RUnlock()
+	u.mu.RLock()
+	loginAttempt, ok := u.loginAC[username]
+	if !ok {
+		return nil
+	}
+	if loginAttempt.FailedAttempt >= maxFailedAttempt {
+		elapsedTime := time.Since(loginAttempt.LastTime)
+		if elapsedTime < timeBlockLoginAttempt {
+			return ErrLoginAttemptBlocked
+		}
+	}
+	return nil
+}
+
+func (u *usecaseHandler) AddFailedAttempt(username string) {
+	defer u.mu.Unlock()
+	u.mu.Lock()
+	loginAttempt, ok := u.loginAC[username]
+	if !ok {
+		u.loginAC[username] = LoginAttempt{
+			FailedAttempt: 1,
+			LastTime:      time.Now(),
+		}
+		return
+	}
+	loginAttempt.FailedAttempt++
+	loginAttempt.LastTime = time.Now()
+	u.loginAC[username] = LoginAttempt{
+		FailedAttempt: loginAttempt.FailedAttempt,
+		LastTime:      loginAttempt.LastTime,
+	}
 }

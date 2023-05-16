@@ -209,8 +209,8 @@ func TestLoginAccount(t *testing.T) {
 				mockUsecase.EXPECT().LoginAccount(gomock.Any(), gomock.Any()).
 					Return(&model.AccountResponse{
 						Success: false,
-						Reason:  model.ErrLoginAccountNotAllowed.Error(),
-					}, model.ErrLoginAccountNotAllowed)
+						Reason:  model.ErrLoginWrongPassword.Error(),
+					}, model.ErrLoginWrongPassword)
 			},
 			checkResponse: func(rr *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, rr.Code)
@@ -222,7 +222,7 @@ func TestLoginAccount(t *testing.T) {
 				require.NoError(t, err)
 
 				require.False(t, rsp.Success)
-				require.Equal(t, model.ErrLoginAccountNotAllowed.Error(), rsp.Reason)
+				require.Equal(t, model.ErrLoginWrongPassword.Error(), rsp.Reason)
 			},
 		},
 		{
