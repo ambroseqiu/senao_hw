@@ -19,6 +19,24 @@ definitions:
     - reason
     - success
     type: object
+  model.DocResponseBadRequest:
+    properties:
+      reason:
+        example: Password is too short
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  model.DocResponseSuccess:
+    properties:
+      reason:
+        example: ""
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -43,14 +61,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.AccountResponse'
+            $ref: '#/definitions/model.DocResponseSuccess'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.AccountResponse'
-        "500":
-          description: Internal Server Error
-          schema: {}
+            $ref: '#/definitions/model.DocResponseBadRequest'
       summary: Create an account
       tags:
       - accounts

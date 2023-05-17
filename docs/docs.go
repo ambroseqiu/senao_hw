@@ -43,18 +43,14 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.AccountResponse"
+                            "$ref": "#/definitions/model.DocResponseSuccess"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.AccountResponse"
+                            "$ref": "#/definitions/model.DocResponseBadRequest"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {}
                     }
                 }
             }
@@ -122,6 +118,32 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "model.DocResponseBadRequest": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": "Password is too short"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "model.DocResponseSuccess": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": ""
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         }

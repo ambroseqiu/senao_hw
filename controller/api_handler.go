@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	_ "github.com/ambroseqiu/senao_hw/docs"
 	"github.com/ambroseqiu/senao_hw/model"
 	"github.com/gin-gonic/gin"
 )
@@ -17,9 +18,8 @@ func errResponse(err error) *gin.H {
 // @Description  Create account by username and password
 // @Tags         accounts
 // @Param        accountRequest body model.AccountRequest true "Account Request Struct"
-// @Success      200  {object}  model.AccountResponse
-// @Failure      400  {object}  model.AccountResponse
-// @Failure      500  {object}  error
+// @Success      200  {object}  model.DocResponseSuccess
+// @Failure      400  {object}  model.DocResponseBadRequest
 // @Router       /accounts [post]
 func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 	var req model.AccountRequest

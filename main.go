@@ -46,6 +46,6 @@ func main() {
 	controller := controller.NewController(usecase)
 	route := gin.Default()
 	controller.SetRoute(route)
-	httpHost := fmt.Sprintf("%s:%s", os.Getenv("DB_HOST"), os.Getenv("HTTP_PORT"))
+	httpHost := fmt.Sprintf("%s:%s", os.Getenv("API_HOST"), os.Getenv("HTTP_PORT"))
 	controller.Start(httpHost)
 }
