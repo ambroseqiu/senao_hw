@@ -19,6 +19,15 @@ definitions:
     - reason
     - success
     type: object
+  model.DocResponseAlreadyExisted:
+    properties:
+      reason:
+        example: Account is already existed
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   model.DocResponseBadRequest:
     properties:
       reason:
@@ -35,6 +44,24 @@ definitions:
         type: string
       success:
         example: true
+        type: boolean
+    type: object
+  model.DocResponseTooManyRequest:
+    properties:
+      reason:
+        example: too many failed login attempt, please try it later
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  model.DocResponseWrongPassword:
+    properties:
+      reason:
+        example: Wrong password
+        type: string
+      success:
+        example: false
         type: boolean
     type: object
 externalDocs:
@@ -66,6 +93,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/model.DocResponseBadRequest'
+        "409":
+          description: Account Is Already Existed
+          schema:
+            $ref: '#/definitions/model.DocResponseAlreadyExisted'
       summary: Create an account
       tags:
       - accounts
@@ -73,7 +104,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: login account and verify username and password
+      description: Login account and verify username and password
       parameters:
       - description: Account Request Struct
         in: body
@@ -88,6 +119,18 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.AccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.DocResponseBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.DocResponseWrongPassword'
+        "429":
+          description: Too Many Failed Login Attempts
+          schema:
+            $ref: '#/definitions/model.DocResponseTooManyRequest'
       summary: Login account
       tags:
       - accounts

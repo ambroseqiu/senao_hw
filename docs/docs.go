@@ -51,13 +51,19 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.DocResponseBadRequest"
                         }
+                    },
+                    "409": {
+                        "description": "Account Is Already Existed",
+                        "schema": {
+                            "$ref": "#/definitions/model.DocResponseAlreadyExisted"
+                        }
                     }
                 }
             }
         },
         "/login": {
             "post": {
-                "description": "login account and verify username and password",
+                "description": "Login account and verify username and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -84,6 +90,24 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.AccountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.DocResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.DocResponseWrongPassword"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Failed Login Attempts",
+                        "schema": {
+                            "$ref": "#/definitions/model.DocResponseTooManyRequest"
                         }
                     }
                 }
@@ -121,6 +145,19 @@ const docTemplate = `{
                 }
             }
         },
+        "model.DocResponseAlreadyExisted": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": "Account is already existed"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "model.DocResponseBadRequest": {
             "type": "object",
             "properties": {
@@ -144,6 +181,32 @@ const docTemplate = `{
                 "success": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "model.DocResponseTooManyRequest": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": "too many failed login attempt, please try it later"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "model.DocResponseWrongPassword": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "example": "Wrong password"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         }

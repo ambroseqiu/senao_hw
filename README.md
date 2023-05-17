@@ -46,6 +46,10 @@ $ docker-compose build
 ```
 $ docker-compose up -d
 ```
+- The API server will make multiple attempts to connect to the PostgreSQL database in case of failure. Therefore, if you encounter an error message like the one below, there is no need to worry:  
+```
+root-api-1       | [error] failed to initialize database, got error failed to connect to `host=postgres user=root database=senao`: dial error (dial tcp 172.18.0.2:5432: connect: connection refused)
+```
 - Check docker to ensure that both the API server and PostgreSQL are running. If you see something similar to the following, it means everything is working well.
 ```
 $ docker ps -a        
@@ -53,3 +57,6 @@ CONTAINER ID   IMAGE                COMMAND                  CREATED         STA
 5e53ef45e278   amboseqiu/senao_hw   "/app/main"              7 seconds ago   Up 5 seconds   0.0.0.0:8080->8080/tcp   senao_hw-api-1
 b8f1d75b6685   postgres:14-alpine   "docker-entrypoint.s…"   7 seconds ago   Up 6 seconds   0.0.0.0:5432->5432/tcp   senao_hw-postgres-1
 ```
+
+- Browse to http://127.0.0.1:8080/swagger/index.html. You will see Swagger 2.0 Api documents as shown below:
+![image info](swagger.png)
