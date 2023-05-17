@@ -15,6 +15,11 @@ type DocResponseBadRequest struct {
 	Reason  string `json:"reason" example:"Password is too short"`
 }
 
+type DocResponseAccountNotFound struct {
+	Success bool   `json:"success" example:"false"`
+	Reason  string `json:"reason" example:"Login account not found"`
+}
+
 type DocResponseWrongPassword struct {
 	Success bool   `json:"success" example:"false"`
 	Reason  string `json:"reason" example:"Wrong password"`
