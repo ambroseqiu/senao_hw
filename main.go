@@ -37,6 +37,7 @@ func main() {
 	gormDB, err := repository.NewGormDB()
 	if err != nil {
 		log.Fatal().Err(err)
+		return
 	}
 
 	migrations.RunMigration(gormDB)

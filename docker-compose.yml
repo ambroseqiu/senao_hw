@@ -11,9 +11,7 @@ services:
     networks: 
       - senao-network
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: amboseqiu/senao_hw
     ports:
       - "8080:8080"
     depends_on:

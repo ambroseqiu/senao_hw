@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -55,7 +54,7 @@ func NewGormDB() (*gorm.DB, error) {
 	select {
 	case err := <-done:
 		if err != nil {
-			return nil, errors.New("can't not access db with gorm")
+			return nil, err
 		}
 	}
 
