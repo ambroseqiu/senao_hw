@@ -58,5 +58,5 @@ CONTAINER ID   IMAGE                COMMAND                  CREATED         STA
 b8f1d75b6685   postgres:14-alpine   "docker-entrypoint.s…"   7 seconds ago   Up 6 seconds   0.0.0.0:5432->5432/tcp   senao_hw-postgres-1
 ```
 
-- Browse to http://127.0.0.1:8080/swagger/index.html. You will see Swagger 2.0 Api documents as shown below:
+- Browse to [http://127.0.0.1:8080/swagger/index.html](http://127.0.0.1:8080/swagger/index.html). You will see Swagger 2.0 Api documents as shown below:
 ![image info](swagger.png)
