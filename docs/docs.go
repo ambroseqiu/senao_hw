@@ -23,7 +23,7 @@ const docTemplate = `{
     "paths": {
         "/accounts": {
             "post": {
-                "description": "Create account by username and password",
+                "description": "Create account by username and password\nNote:\nusername: a string representing the desired username for the account, with a minimum length of 3 characters and a maximum length of 32 characters.\npassword: a string representing the desired password for the account, with a minimum length of 8 characters and a maximum length of 32 characters,\ncontaining at least 1 uppercase letter, 1 lowercase letter, and 1 number.",
                 "tags": [
                     "accounts"
                 ],
@@ -63,7 +63,7 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
-                "description": "Login account and verify username and password",
+                "description": "Login account and verify username and password\nNote:\nIf the password verification fails five times, the user should wait one minute before attempting to verify the password again.",
                 "consumes": [
                     "application/json"
                 ],
@@ -89,13 +89,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.AccountResponse"
+                            "$ref": "#/definitions/model.DocResponseSuccess"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.DocResponseBadRequest"
+                            "$ref": "#/definitions/model.DocResponseAccountNotFound"
                         }
                     },
                     "401": {
@@ -130,18 +130,16 @@ const docTemplate = `{
                 }
             }
         },
-        "model.AccountResponse": {
+        "model.DocResponseAccountNotFound": {
             "type": "object",
-            "required": [
-                "reason",
-                "success"
-            ],
             "properties": {
                 "reason": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Login account not found"
                 },
                 "success": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },

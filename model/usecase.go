@@ -103,6 +103,7 @@ func (u *usecaseHandler) LoginAccount(ctx context.Context, req AccountRequest) (
 		return nil, err
 	}
 	rsp.Success = true
+	u.ClearFailedAttempt(account.Username)
 	return rsp, nil
 }
 
@@ -138,5 +139,14 @@ func (u *usecaseHandler) AddFailedAttempt(username string) {
 	u.loginAC[username] = LoginAttempt{
 		FailedAttempt: loginAttempt.FailedAttempt,
 		LastTime:      loginAttempt.LastTime,
+	}
+}
+
+func (u *usecaseHandler) ClearFailedAttempt(username string) {
+	defer u.mu.Unlock()
+	u.mu.Lock()
+	u.loginAC[username] = LoginAttempt{
+		FailedAttempt: 0,
+		LastTime:      time.Now(),
 	}
 }
