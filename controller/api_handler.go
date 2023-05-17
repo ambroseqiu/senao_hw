@@ -20,6 +20,7 @@ func errResponse(err error) *gin.H {
 // @Param        accountRequest body model.AccountRequest true "Account Request Struct"
 // @Success      200  {object}  model.DocResponseSuccess
 // @Failure      400  {object}  model.DocResponseBadRequest
+// @Failure      409  {object}  model.DocResponseAlreadyExisted "Account Is Already Existed"
 // @Router       /accounts [post]
 func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 	var req model.AccountRequest
@@ -33,6 +34,9 @@ func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 		if err == model.ErrAccountRequestValidationFailed {
 			ctx.JSON(http.StatusBadRequest, rsp)
 			return
+		} else if err == model.ErrAccountIsAlreadyExisted {
+			ctx.JSON(http.StatusConflict, rsp)
+			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errResponse(err))
 		return
@@ -43,12 +47,15 @@ func (ctrl *apiController) CreateAccount(ctx *gin.Context) {
 
 // LoginAccount godoc
 // @Summary      Login account
-// @Description  login account and verify username and password
+// @Description  Login account and verify username and password
 // @Tags         accounts
 // @Param        accountRequest body model.AccountRequest true "Account Request Struct"
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  model.AccountResponse
+// @Failure      400  {object}  model.DocResponseBadRequest
+// @Failure      401  {object}  model.DocResponseWrongPassword
+// @Failure      429  {object}  model.DocResponseTooManyRequest "Too Many Failed Login Attempts"
 // @Router       /login [post]
 func (ctrl *apiController) LoginAccount(ctx *gin.Context) {
 	var req model.AccountRequest
